@@ -6,6 +6,11 @@ use DBI;
 use DBIx::Oracle::UpgradeUtf8;
 use Getopt::Long;
 
+use_ok 'DBIx::Oracle::UpgradeUtf8'
+  or BAIL_OUT;
+
+diag( "Testing DBIx::Oracle::UpgradeUtf8 $DBIx::Oracle::UpgradeUtf8::VERSION, Perl $], $^X" );
+
 # command-line options for connecting to the Oracle database
 GetOptions \my %opt,
   'oradb=s',
