@@ -1,0 +1,10 @@
+Build.PL
+Changes
+lib/DBIx/Oracle/UpgradeUtf8.pm
+MANIFEST			This list of files
+META.json
+META.yml
+t/basic.t
+t/filehandle.t
+t/from_database.t
+t/booleans.t
