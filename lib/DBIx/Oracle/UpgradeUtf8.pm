@@ -141,19 +141,19 @@ with this specification in the L<DBI> documentation :
 
 =over
 
-    Perl supports two kinds of strings: Unicode (utf8 internally) and
-    non-Unicode (defaults to iso-8859-1 if forced to assume an
-    encoding). Drivers should accept both kinds of strings and, if
-    required, convert them to the character set of the database being
-    used. Similarly, when fetching from the database character data that
-    isn't iso-8859-1 the driver should convert it into utf8.
+I<< Perl supports two kinds of strings: Unicode (utf8 internally) and
+non-Unicode (defaults to iso-8859-1 if forced to assume an
+encoding). Drivers should accept both kinds of strings and, if
+required, convert them to the character set of the database being
+used. Similarly, when fetching from the database character data that
+isn't iso-8859-1 the driver should convert it into utf8. >>
 
 =back
 
 DBD drivers like L<DBD::Sqlite> and L<DBD::Pg> comply with the specification:
 non-Unicode strings in Perl programs are correctly encoded into utf8 before
-being passed to the database. By contrast, L<DBD::Oracle> behave as follows
-when the environment variable C<NLS_LANG> specifies Unicode for the database character set :
+being passed to the database. By contrast, L<DBD::Oracle> behaves as follows
+when the client character set is Unicode (as set through the C<NLS_LANG> environment variable) :
 
 =over
 
@@ -167,7 +167,7 @@ Perl Unicode strings are properly sent to the database;
 
 =item *
 
-Perl non-Unicode strings (without the utf8 flag) are B<not>
+Perl non-Unicode strings (i.e. without the utf8 flag) are B<not>
 encoded into utf8 before being sent to the database. As a result,
 characters in range 126-255 in native strings are not properly
 treated on the server side.
@@ -180,11 +180,12 @@ It is not clear when (if ever) it will be fixed.
 
 The present module implements a workaround, thanks to the I<callbacks>
 facility in L<DBI>'s architecture : callbacks intercept method calls
-at the DBI level, and force all string arguments to be in Perl Unicode strings before
+at the DBI level, and force all string arguments to be in utf8 before
 passing them to L<DBD::Oracle>.
 
 Actually this module could also be used with other DBD drivers;
-in spite of the module name, there is nothing in the code that is specially bound to Oracle.
+in spite of the module's name, there is nothing in the code that is specially bound to Oracle.
+I do not know if otther Perl DBD drivers suffer from the same deficiency.
 
 
 =head1 METHODS
@@ -252,7 +253,7 @@ no ground for using a sophisticated object system.
 =head2 Strings are modified in-place
 
 String arguments to DBI methods are modified through C<utf8::upgrade()>, which modifies
-striongs I<in-place>. It is very unlikely that this would affect your client program, but
+strings I<in-place>. It is very unlikely that this would affect your client program, but
 if it does, you need to make your own string copies before passing them to the DBI methods.
 
 =head2 Possible redundancies
@@ -265,7 +266,7 @@ but it does no harm since strings are never upgraded twice.
 
 =head2 Caveats
 
-The C<bind_param_inout()> is not covered -- the client program must do the proper updates
+The C<bind_param_inout()> method is not covered -- the client program must do the proper updates
 if that method is used to send strings to the database.
 
 =head1 AUTHOR
